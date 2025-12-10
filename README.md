@@ -2,6 +2,12 @@
 
 > **DISCLAIMER:** This repository is a technical proof-of-concept developed to demonstrate the architectural implementation of Generative Graph Neural Networks (GNNs) for materials science. It focuses on the application of geometric deep learning to "inverse" problems—mapping disordered states back to equilibrium—rather than standard property prediction.
 
+<div align="center" style="background-color: white; padding: 15px; border-radius: 5px;">
+  <img src="movie.gif" alt="Vacancy Healing Demo" width="60%">
+  <br><br>
+  <em><strong>Figure 1: Generative Restoration in Action.</strong> The model takes a heavily distorted lattice (high entropy) and iteratively "heals" it by predicting displacement vectors. Notice how it snaps atoms back to the Face-Centered Cubic (FCC) lattice sites while strictly preserving the central vacancy defect (it does not collapse the hole).</em>
+</div>
+
 ---
 
 ## 1. Project Overview
@@ -37,6 +43,7 @@ gnn_demo_3_generative/
 ├── final_demo.py               # Vacancy healing simulation (Inference)
 ├── best_denoise_model.pth      # Pre-trained model weights
 ├── final_demo_vacancy_healing.lammpstrj  # Output trajectory (Visualizable in OVITO)
+├── movie.gif                   # Animation of the healing process
 └── README.md                   # Project documentation
 ```
 
@@ -72,7 +79,9 @@ The architecture is motivated by **Denoising Score Matching**, where the goal is
 ### 5.1 The Generative Task
 We frame the healing process as learning a displacement vector field $\Delta \mathbf{r}_i$ for every atom $i$. The model minimizes the difference between the predicted restoration vector and the inverse of the applied noise:
 
-$$ \mathcal{L} = \frac{1}{N} \sum_{i=1}^N \| \mathbf{f}_{\theta}(\mathbf{r}_i + \mathbf{\epsilon}) - (-\mathbf{\epsilon}) \|^2 $$
+$$
+\mathcal{L} = \frac{1}{N} \sum_{i=1}^N \| \mathbf{f}_{\theta}(\mathbf{r}_i + \mathbf{\epsilon}) - (-\mathbf{\epsilon}) \|^2
+$$
 
 **Variable Definitions:**
 * $\mathbf{r}_i$: Ground truth position.
@@ -84,19 +93,28 @@ $$ \mathcal{L} = \frac{1}{N} \sum_{i=1}^N \| \mathbf{f}_{\theta}(\mathbf{r}_i + 
 To maintain rotational invariance and handle periodic boundary conditions (PBC) rigorously, the network uses a **Radial Basis Function (RBF) Expansion**.
 
 **1. Pairwise Distances**
+
 First, we calculate Euclidean distances $d_{ij}$ respecting the Minimum Image Convention:
 
-$$ \vec{\delta}_{ij} = (\vec{x}_j - \vec{x}_i) - \text{Box} \cdot \text{round}\left( \frac{\vec{x}_j - \vec{x}_i}{\text{Box}} \right) $$
+$$
+\vec{\delta}_{ij} = (\vec{x}_j - \vec{x}_i) - \text{Box} \cdot \text{round}\left( \frac{\vec{x}_j - \vec{x}_i}{\text{Box}} \right)
+$$
 
 **2. Gaussian Expansion**
+
 Next, we expand these distances into a learnable basis set:
 
-$$ \phi_k(d_{ij}) = \exp(-\gamma (d_{ij} - \mu_k)^2) $$
+$$
+\phi_k(d_{ij}) = \exp(-\gamma (d_{ij} - \mu_k)^2)
+$$
 
 **3. Vector Aggregation**
+
 Finally, the displacement for atom $i$ is the weighted sum of unit vectors to its neighbors, scaled by the learned interaction weights $w_{ij}$:
 
-$$ \Delta \mathbf{r}_i = \sum_{j \in \mathcal{N}(i)} w_{ij} \cdot \frac{\mathbf{r}_j - \mathbf{r}_i}{\| \mathbf{r}_j - \mathbf{r}_i \|} $$
+$$
+\Delta \mathbf{r}_i = \sum_{j \in \mathcal{N}(i)} w_{ij} \cdot \frac{\mathbf{r}_j - \mathbf{r}_i}{\| \mathbf{r}_j - \mathbf{r}_i \|}
+$$
 
 This architecture ensures that the predicted displacements are always geometrically consistent with the local environment.
 
