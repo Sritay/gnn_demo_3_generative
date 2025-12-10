@@ -5,7 +5,7 @@
 <div align="center" style="background-color: white; padding: 15px; border-radius: 5px;">
   <img src="movie.gif" alt="Vacancy Healing Demo" width="60%">
   <br><br>
-  <em><strong>Figure 1: Generative Restoration in Action.</strong> The model takes a heavily distorted lattice (high entropy) and iteratively "heals" it by predicting displacement vectors. Notice how it snaps atoms back to the Face-Centered Cubic (FCC) lattice sites while strictly preserving the central vacancy defect (it does not collapse the hole).</em>
+  <em><strong>Figure 1: Generative Restoration in Action.</strong> The model takes a heavily distorted lattice (high entropy) and iteratively "heals" it by predicting displacement vectors. Atoms snap back to the Face-Centered Cubic (FCC) lattice sites while strictly preserving the central vacancy defect.</em>
 </div>
 
 ---
