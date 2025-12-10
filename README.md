@@ -18,7 +18,7 @@ While standard GNNs in computational chemistry are **discriminative** (predictin
 By treating the "healing" process as a denoising task, the model effectively learns the **Force Field** of the crystal lattice without requiring explicit energy labels. This approach serves as a foundational step toward **defect foundation models**, capable of identifying and correcting non-equilibrium structures in real-time molecular dynamics simulations.
 
 ### Key Objectives
-* **Generative Restoration:** Train a model to reverse entropy. The network acts as a Maxwell's Demon, sorting atoms from high-disorder states back to low-disorder lattice sites.
+* **Generative Restoration:** Train a model to reverse entropy. The network sorts atoms from high-disorder states back to low-disorder lattice sites.
 * **Local Action:** Interactions are strictly local (defined by radial cutoffs), ensuring the model scales linearly $O(N)$ and can be deployed on systems of arbitrary size.
 * **Vacuum Stability:** A critical challenge in generative modeling for crystals is distinguishing between "real" vacuum (a vacancy defect) and "fake" vacuum (noise). This model successfully preserves structural vacancies while healing the lattice around them.
 
