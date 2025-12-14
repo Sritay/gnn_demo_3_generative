@@ -1,0 +1,3 @@
+numpy
+# Use CPU-only PyTorch build in CI
+torch
